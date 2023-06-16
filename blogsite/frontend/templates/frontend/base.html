@@ -1,0 +1,78 @@
+{% load static %}
+
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="{% static 'frontend/css/style.css' %}">
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <title>
+    {% block title %}
+
+    {% endblock %}
+  </title>
+</head>
+<body>
+<div id="site">
+
+  <header class="header container flex">
+    <a href="{% url 'frontend:index' %}">
+      <img src="{% static 'frontend/images/logo.svg' %}" alt="Логотип">
+    </a>
+    {% if request.user.is_authenticated and request.path == '/' %}
+      <p class="p-reset header__hello">
+        Добро пожаловать, {{ request.user.username }}!
+      </p>
+    {% elif not request.user.is_authenticated and request.path != '/' or not request.user.is_authenticated and request.path == '/' %}
+      <p class="p-reset header__hello">
+        Вы не авторизованы на нашем сайте
+      </p>
+    {% endif %}
+    <nav>
+      {% if not request.user.is_authenticated %}
+        <button class="btn-reset header__btn">
+          <a href="{% url 'frontend:registration' %}">
+            Регистрация
+          </a>
+        </button>
+        <button class="btn-reset header__btn">
+          <a href="{% url 'rest_framework:login' %}">
+            Войти
+          </a>
+        </button>
+      {% else %}
+        <button class="btn-reset header__btn">
+          <a href="{% url 'rest_framework:logout' %}">
+            Выйти
+          </a>
+        </button>
+      {% endif %}
+    </nav>
+  </header>
+
+
+  <main class="main">
+    {% block i_section %}
+    {% endblock %}
+
+    {% if not request.path == '/' %}
+      <div class="container">
+        <a class="link" href="{% url 'frontend:index' %}">
+          Главная страница
+        </a>
+      </div>
+    {% endif %}
+  </main>
+</div>
+
+
+{% block mixins %}
+{% endblock %}
+<script src="{% static 'frontend/js/app.js' %}"></script>
+
+</body>
+</html>
