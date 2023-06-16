@@ -1,0 +1,60 @@
+{% extends 'frontend/base.html' %}
+{% load static %}
+
+{% block title %}
+  Главная страница
+{% endblock %}
+
+{% block i_section %}
+  <section class="news container">
+    <h1 class="h-reset post__title">
+      Лента новостей
+    </h1>
+    {% if request.user.is_staff %}
+      <div class="post__mypublications">
+        <a class="link" href="{% url 'frontend:post_create' %}">
+          Разместить статью
+        </a>
+      </div>
+    {% elif request.user.is_anonymous or not request.user.is_staff %}
+      <p class="p-reset post__verification">
+        Размещать посты могут только администраторы
+      </p>
+    {% endif %}
+    <ul class="list-reset post__list flex" v-if="Object.values(posts).length > 0">
+      <li class="post__item" v-for="post in Object.values(posts)">
+        <h2 class="h-reset post__name">
+          <a class="link" :href=post.href>
+            ${ post.title }$
+          </a>
+        </h2>
+        <p class="p-reset post__descr">
+          ${ post.description }$
+        </p>
+        <p class="p-reset post__descr">
+          <i>
+            Комментарии (${ post.comments.length }$)
+          </i>
+        </p>
+        <p class="p-reset post__author">
+          <i>
+            Автор статьи: ${ post.author.username }$
+          </i>
+        </p>
+        <p class="p-reset post__date">
+          <i>
+            Дата публикации: ${ post.published_at }$
+          </i>
+        </p>
+      </li>
+    </ul>
+    <div v-if="Object.values(posts).length = 0">
+      Постов пока что нет
+    </div>
+
+  </section>
+{% endblock %}
+
+{% block mixins %}
+  <script src="{% static 'frontend/js/index.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends 'frontend/base.html' %}
+
+{% load static %}
+
+{% block title %}
+  Страница регистрации
+{% endblock %}
+
+{% block i_section %}
+  <section class="registration container">
+    <h1 class="h-reset post__title">
+      Страница регистрации
+    </h1>
+    <form class="form" action="#" method="post" @submit.prevent="registration()">
+      <div class="form-group">
+        <label class="form-label" for="first_name">
+          Имя
+        </label>
+        <input class="form-input" id="first_name" name="first_name" type="text" required v-model="first_name"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="last_name">
+          Фамилия
+        </label>
+        <input class="form-input" id="last_name" name="last_name" type="text" required v-model="last_name"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="mail">
+          E-mail
+        </label>
+        <input class="form-input" id="mail" name="mail" type="email" required v-model="email"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="username">
+          Логин (никнейм)
+        </label>
+        <input class="form-input" id="username" name="username" type="text" required v-model="username"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="password">
+          Пароль
+        </label>
+        <input class="form-input" id="password" name="password" type="password" required v-model="password"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="passwordReply">
+          Подтверждение пароля
+        </label>
+        <input class="form-input" id="passwordReply" name="passwordReply" type="password" required
+               v-model="passwordReply"/>
+      </div>
+
+      <div class="form-group">
+        <button class="btn btn_success" type="submit">
+          Сохранить
+        </button>
+      </div>
+    </form>
+  </section>
+
+{% endblock %}
+
+{% block mixins %}
+  <script src="{% static 'frontend/js/registration.js' %}"></script>
+{% endblock %}

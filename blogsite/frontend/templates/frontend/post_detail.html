@@ -1,0 +1,79 @@
+{% extends 'frontend/base.html' %}
+{% load static %}
+
+{% block title %}
+  Пост
+{% endblock %}
+
+{% block i_section %}
+  <section class="post container">
+    <div class="post__item-detail">
+      <h2 class="h-reset post__name">
+        ${ post.title }$
+      </h2>
+      <p class="p-reset post__descr">
+        ${ post.description }$
+      </p>
+      <div class="post__comments comments">
+        <h3 class="h-reset comments__title">
+          Комментарии
+        </h3>
+        <div v-if="post.comments != 0">
+          <ul class="list-reset comments__list" v-for="comment in post.comments">
+            <li class="comments__item flex">
+              <div class="comments__left">
+                <h3 class="h-reset comments__author">
+                  ${comment.author.first_name}$:
+                </h3>
+                <span class="comments__date">
+                  ${ comment.published_at }$
+                </span>
+              </div>
+              <p class="p-reset comments__descr">
+                ${ comment.comment }$
+              </p>
+            </li>
+          </ul>
+        </div>
+        <div v-else>
+          <p class="p-reset">
+            Комментариев нет
+          </p>
+        </div>
+      </div>
+      <p class="p-reset post__author">
+        <i>
+          Автор статьи: ${ post.author.username }$
+        </i>
+      </p>
+      <p class="p-reset post__date">
+        <i>
+          Дата публикации: ${ post.published_at }$
+        </i>
+      </p>
+    </div>
+
+    {% if request.user.is_authenticated %}
+    <form class="form" action="#" method="post" @submit.prevent="postComment()">
+      <div class="form-group">
+        <label class="form-label" for="comment">
+          Комментарий
+        </label>
+        <textarea class="form-input" id="comment" name="comment" cols="40" rows="3" required v-model="comment">
+        </textarea>
+      </div>
+
+      <div class="form-group">
+        <button class="btn btn_success" type="submit">
+          Отправить
+        </button>
+      </div>
+    </form>
+    {% endif %}
+
+  </section>
+{% endblock %}
+
+{% block mixins %}
+  <script src="{% static 'frontend/js/post_detail.js' %}"></script>
+{% endblock %}

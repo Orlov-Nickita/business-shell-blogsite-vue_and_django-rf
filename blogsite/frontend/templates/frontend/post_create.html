@@ -1,0 +1,37 @@
+{% extends 'frontend/base.html' %}
+{% load static %}
+
+{% block title %}
+  Создание поста
+{% endblock %}
+
+{% block i_section %}
+  <section class="create container">
+    <form class="form" action="#" method="post" @submit.prevent="post_create()">
+      <div class="form-group">
+        <label class="form-label" for="post_title">
+          Тема поста
+        </label>
+        <input class="form-input" id="post_title" name="post_title" type="text" required v-model="post_title"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="post_description">
+          Текст поста
+        </label>
+        <textarea class="form-input" id="post_description" name="post_description" cols="30" rows="10" required
+                  v-model="post_description">
+        </textarea>
+      </div>
+
+      <div class="form-group">
+        <button class="btn btn_success" type="submit">
+          Сохранить
+        </button>
+      </div>
+    </form>
+  </section>
+{% endblock %}
+
+{% block mixins %}
+  <script src="{% static 'frontend/js/post_create.js' %}"></script>
+{% endblock %}

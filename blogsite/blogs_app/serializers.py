@@ -1,36 +1,12 @@
-from django.contrib.auth.models import User
 from rest_framework import serializers
-
 from blogs_app.models import Comment, Post
-
-
-class UseShortSerializer(serializers.ModelSerializer):
-    """
-    Сериализатор для модели User
-    """
-    
-    class Meta:
-        """
-        Метакласс для определения модели и полей модели, с которыми будет работать сериализатор
-        """
-        model = User
-        fields = ['username']
-
-
-class UserDetailSerializer(serializers.ModelSerializer):
-    """
-    Сериализатор для модели User
-    """
-    
-    class Meta:
-        """
-        Метакласс для определения модели и полей модели, с которыми будет работать сериализатор
-        """
-        model = User
-        fields = ['username', 'first_name', 'last_name']
+from users.serializers import UserDetailSerializer
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для модели Comment для метода GET
+    """
     published_at = serializers.DateTimeField(read_only=True, format="%H:%M %d-%m-%Y")
     author = UserDetailSerializer(read_only=True)
     
@@ -40,6 +16,9 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class CommentCreateSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для модели Comment для метода POST
+    """
     comment = serializers.CharField(max_length=None, required=True)
     
     class Meta:
@@ -48,6 +27,9 @@ class CommentCreateSerializer(serializers.ModelSerializer):
 
 
 class PostCreateSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для модели Post для метода POST
+    """
     description = serializers.CharField(max_length=None, required=True)
     
     class Meta:
@@ -55,22 +37,10 @@ class PostCreateSerializer(serializers.ModelSerializer):
         fields = ['title', 'description', 'author']
 
 
-class PostListSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField(read_only=True)
-    author = UseShortSerializer(read_only=True)
-    published_at = serializers.DateTimeField(read_only=True, format="%H:%M %d-%m-%Y")
-    
-    class Meta:
-        model = Post
-        fields = ['id', 'title', 'description', 'author', 'published_at']
-    
-    def to_representation(self, instance):
-        a = super().to_representation(instance)
-        a['author'] = a['author']['username']
-        return a
-
-
 class PostDetailSerializer(serializers.ModelSerializer):
+    """
+        Сериализатор для модели Post для метода GET
+        """
     id = serializers.IntegerField(read_only=True)
     author = UserDetailSerializer(read_only=True)
     published_at = serializers.DateTimeField(read_only=True, format="%H:%M %d-%m-%Y")
@@ -78,4 +48,4 @@ class PostDetailSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Post
-        fields = ['id', 'title', 'description', 'author', 'published_at', 'comments']
+        fields = ['id', 'title', 'description', 'author', 'published_at', 'href', 'comments']

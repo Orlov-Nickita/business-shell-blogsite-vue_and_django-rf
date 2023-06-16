@@ -1,29 +1,40 @@
 from rest_framework.generics import CreateAPIView, ListAPIView
 from rest_framework import status
+from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
 from rest_framework.response import Response
-
 from blogs_app.models import Post, Comment
-from blogs_app.serializers import PostCreateSerializer, PostListSerializer, PostDetailSerializer, \
+from blogs_app.serializers import PostCreateSerializer, PostDetailSerializer, \
     CommentCreateSerializer
 
 
 class PostCreateAPIView(CreateAPIView):
+    """
+    Представление для создания постов
+    """
     serializer_class = PostCreateSerializer
     queryset = Post.objects.all()
+    permission_classes = [IsAdminUser]
     
     def post(self, request, *args, **kwargs):
-        serializer = self.serializer_class(data=request.data)
+        data = {
+            'title': request.data.get('post_title'),
+            'description': request.data.get('post_description'),
+            'author': request.user.id,
+        }
+        serializer = self.serializer_class(data=data)
         if serializer.is_valid(raise_exception=True):
-            a = serializer.save()
-            return Response(f'Успешно добавлен новый пост - id = {a.id}', status=status.HTTP_201_CREATED)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# curl -X POST http://127.0.0.1:8000/api/post/create/ -H "Content-Type: application/json" -d "{\"author\":1, \"title\":\"this is first post in the blog site\", \"description\":\"this is description of the first post\"}"
-
 class PostListAPIView(ListAPIView):
-    serializer_class = PostListSerializer
-    queryset = Post.objects.all()
+    """
+    Представление для получения всех постов из БД
+    """
+    serializer_class = PostDetailSerializer
+    queryset = Post.objects.order_by('-published_at').all()
+    permission_classes = [AllowAny]
     
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
@@ -33,18 +44,26 @@ class PostListAPIView(ListAPIView):
         qs = super().get_queryset()
         
         if post_id:
-            self.serializer_class = PostDetailSerializer
             return qs.filter(id=post_id)
         
         return qs
 
 
 class CommentCreateAPIView(CreateAPIView):
+    """
+    Представление для создания комментариев
+    """
     serializer_class = CommentCreateSerializer
     queryset = Comment.objects.all()
+    permission_classes = [IsAuthenticated]
     
     def post(self, request, *args, **kwargs):
-        serializer = self.serializer_class(data=request.data)
+        data = {
+            'author': request.user.id,
+            **request.data
+        }
+        serializer = self.serializer_class(data=data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-            return Response('Комментарий успешно добавлен', status=status.HTTP_201_CREATED)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
